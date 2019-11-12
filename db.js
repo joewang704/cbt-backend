@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 
 import { capitalize, createSchema } from './utils'
 
-mongoose.connect('mongodb://localhost:27017/cbt', { useNewUrlParser: true })
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/cbt', { useNewUrlParser: true })
 
 const createExercise = (name, schema) => {
   return mongoose.model(name, createSchema(schema))
@@ -48,9 +48,9 @@ export const getEntriesForExercise = (type) => getExerciseModel(type).find()
 
 export const getExerciseEntry = (type, id) => getExerciseModel(type).findById(id)
 
-export const addExerciseEntry = (type, body) => {
+export const addExerciseEntry = (type, entry) => {
   const Model = getExerciseModel(type)
-  const m = new Model(body)
+  const m = new Model(entry)
   return m.save().then((result, err) => {
     if (err) {
       throw err
@@ -60,5 +60,7 @@ export const addExerciseEntry = (type, body) => {
     return result
   })
 }
+
+export const updateExerciseEntry = (type, id, entry) => getExerciseModel(type).findById(id).updateOne(entry)
 
 export const removeExerciseEntry = (type, id) => getExerciseModel(type).remove({ _id: id })

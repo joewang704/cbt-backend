@@ -55,6 +55,19 @@ app.get('/exercise/:type/:id', (req, res) => {
   })
 })
 
+app.put('/exercise/:type/:id', (req, res) => {
+  const { type, id } = req.params
+  db.updateExerciseEntry(type, id, req.body).then(({ ok }) => {
+    if (ok) {
+      res.send(result)
+    } else {
+      res.status(500).send("Did not successfully update")
+    }
+  }).catch(err => {
+    res.send(err)
+  })
+})
+
 app.delete('/exercise/:type/:id', (req, res) => {
   const { type, id } = req.params
   db.removeExerciseEntry(type, id).then(result => {
